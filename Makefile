@@ -11,9 +11,18 @@ modules:
 app_us:
 	gcc -pthread -O2 reader_writer_us.c -o reader_writer_us
 
+perf_us:
+	perf stat -r 5 ./reader_writer_us 2>&1 | tee perf_app_us.log
+
+perf_kern:
+	sudo insmod reader_writer_kern.ko
+	sudo perf record -e cycles:u -aR -g -o perf_kern.data sleep 5
+	sudo rmmod reader_writer_kern
+	sudo perf script -i perf_kern.data | flamegraph.pl > flg_kern.html
+
 clean:
 	$(MAKE) -C $(KDIR) M=$(PWD) clean
-	rm -f reader_writer_us perf_app_us.log flg_kern.html
+	rm -f reader_writer_us perf_app_us.log perf_kern.data flg_kern.html
 
 load:
 	sudo insmod reader_writer_kern.ko
