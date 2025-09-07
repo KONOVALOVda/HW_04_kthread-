@@ -54,13 +54,11 @@ static int __init rw_module_init(void)
 
 	pr_info("RW module: init\n");
 
-	for (i = 0; i < NUM_READERS; i++) {
+	for (i = 0; i < NUM_READERS; i++)
 		readers[i] = kthread_run(reader_fn, (void *)(long)i, "reader_%d", i);
-	}
 
-	for (i = 0; i < NUM_WRITERS; i++) {
+	for (i = 0; i < NUM_WRITERS; i++)
 		writers[i] = kthread_run(writer_fn, (void *)(long)i, "writer_%d", i);
-	}
 
 	return 0;
 }
